@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
                     ajax_object.ajax_url,
                     data,
                     function(response) {
-                        $('.star-container').raty({
+                        $('.star-container').raty( 'set', {
                             path: ajax_object.plugins_url,
                             readOnly: true,
                             score: value,
