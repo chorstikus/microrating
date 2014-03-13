@@ -42,7 +42,7 @@ function mr_enqueue_script_and_styles() {
     $ratings = get_post_meta( $post->ID, 'mr_post_rating' );
     $count = sizeof( $ratings );
     $sum = array_sum( $ratings );
-    $average = round( $sum / $count );
+    $average = ( $count > 0 ) ? round( $sum / $count ) : 0;
     if ( isset( $_COOKIE['mr_voted'] ) ) {
         $value = $_COOKIE['mr_voted'];
     } else {
@@ -67,7 +67,7 @@ function mr_print_start_rating( $content ) {
     if ( is_single() ) {
         $ratings = get_post_meta( get_the_ID(), 'mr_post_rating' );
         $count = sizeof( $ratings );
-        $average = round( array_sum( $ratings ) / $count );
+        $average = ( $count > 0 ) ? round( array_sum( $ratings ) / $count ) : 0;
 
         $content .= "<div class='rating-container' itemscope itemtype='http://data-vocabulary.org/Review-aggregate'>
             <h4>Review <span itemprop='itemreviewed'>".get_the_title()."</span></h4>
