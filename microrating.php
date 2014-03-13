@@ -38,18 +38,27 @@ function mr_enqueue_script_and_styles() {
     wp_enqueue_script( 'rating_js', plugins_url( 'js/rating.js', __FILE__ ), array( 'jquery' ) );
     wp_enqueue_script( 'mr_main_js', plugins_url( 'js/microrating.js', __FILE__ ), array( 'jquery' ) );
 
-    // set some local variables to javascript to handle the realtime updates
-    $ratings = get_post_meta( $post->ID, 'mr_post_rating' );
-    $count = sizeof( $ratings );
-    $sum = array_sum( $ratings );
-    $average = ( $count > 0 ) ? round( $sum / $count ) : 0;
-    if ( isset( $_COOKIE['mr_voted'] ) ) {
-        $value = $_COOKIE['mr_voted'];
-    } else {
-        $value = false;
-    }
-    wp_localize_script( 'mr_main_js', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'post_id' => $post->ID, 'average' => $average, 'count' => $count, 'sum' => $sum, 'voted_value' => $value, 'plugins_url' => plugins_url( 'img', __FILE__ ) ) );
 
+    // set some local variables to javascript to handle the realtime updates
+    if ( is_single() ) {
+        $ratings = get_post_meta( $post->ID, 'mr_post_rating' );
+        if ( $ratings ) {
+            $count = sizeof( $ratings );
+            $sum = array_sum( $ratings );
+            $average = round( $sum / $count );
+        } else {
+            $count = 0;
+            $sum = 0;
+            $average = 0;
+        }
+        if ( isset( $_COOKIE['mr_voted'] ) ) {
+            $value = $_COOKIE['mr_voted'];
+        } else {
+            $value = false;
+        }
+        
+        wp_localize_script( 'mr_main_js', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'post_id' => $post->ID, 'average' => $average, 'count' => $count, 'sum' => $sum, 'voted_value' => $value, 'plugins_url' => plugins_url( 'img', __FILE__ ) ) );
+    }
 
     wp_enqueue_style( 'mr_main_css', plugins_url( 'css/microrating.css', __FILE__ ) );
 }

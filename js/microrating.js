@@ -1,4 +1,7 @@
 jQuery(document).ready(function($) {
+
+    if ( typeof ajax_object == 'undefined' )
+        return;
     
     var currentCount = parseInt($('.count').text(), 10),
         currentAverage = parseInt($('.average').text(), 10);
