@@ -38,6 +38,7 @@ function mr_enqueue_script_and_styles() {
     wp_enqueue_script( 'rating_js', plugins_url( 'js/rating.js', __FILE__ ), array( 'jquery' ) );
     wp_enqueue_script( 'mr_main_js', plugins_url( 'js/microrating.js', __FILE__ ), array( 'jquery' ) );
 
+    // set some local variables to javascript to handle the realtime updates
     $ratings = get_post_meta( $post->ID, 'mr_post_rating' );
     $count = sizeof( $ratings );
     $sum = array_sum( $ratings );
@@ -47,8 +48,8 @@ function mr_enqueue_script_and_styles() {
     } else {
         $value = false;
     }
-    
     wp_localize_script( 'mr_main_js', 'ajax_object', array( 'ajax_url' => admin_url( 'admin-ajax.php' ), 'post_id' => $post->ID, 'average' => $average, 'count' => $count, 'sum' => $sum, 'voted_value' => $value, 'plugins_url' => plugins_url( 'img', __FILE__ ) ) );
+
 
     wp_enqueue_style( 'mr_main_css', plugins_url( 'css/microrating.css', __FILE__ ) );
 }
@@ -61,6 +62,8 @@ add_action( 'wp_enqueue_scripts', 'mr_enqueue_script_and_styles' );
  * @return string
  */
 function mr_print_start_rating( $content ) {
+
+    // only posts are rateable
     if ( is_single() ) {
         $ratings = get_post_meta( get_the_ID(), 'mr_post_rating' );
         $count = sizeof( $ratings );
@@ -89,7 +92,11 @@ function mr_print_start_rating( $content ) {
 }
 add_filter( 'the_content', 'mr_print_start_rating' );
 
-
+/**
+ * The ajax function that is called if someone rates a post.
+ * It will get the parameters from the ajax post request and creates a post meta entry.
+ * For only reviewing once it then sets a cookie.
+ */
 function add_rating_to_post() {
     $vote = intval( $_POST['vote'] );
     $postID = intval( $_POST['post_id'] );
