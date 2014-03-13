@@ -1,0 +1,10 @@
+.rating-container {
+    background: #ececec;
+    padding: 20px;
+}
+.rating-container p {
+    margin: 0;
+}
+.star-container {
+    margin-bottom: 15px;
+}
